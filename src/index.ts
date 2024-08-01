@@ -4,17 +4,17 @@ import {
   PlatformId,
   RiotRateLimiter,
 } from "@fightmegg/riot-rate-limiter";
-import Bottleneck from "bottleneck";
-import debug from "debug";
-import { RedisOptions } from "ioredis";
+// import Bottleneck from "bottleneck";
+// import debug from "debug";
+// import { RedisOptions } from "ioredis";
 import { compile } from "path-to-regexp";
-import qs from "querystring";
+import qs from "node:querystring";
 import { Leaves, RiotAPITypes } from "./@types";
-import { MemoryCache, RedisCache } from "./cache";
+// import { MemoryCache, RedisCache } from "./cache";
 import { DDragon } from "./ddragon";
 import { regionToCluster } from "./utils";
 
-const debugCache = debug("riotapi:cache");
+// const debugCache = debug("riotapi:cache");
 
 const createHost = compile(HOST, { encode: encodeURIComponent });
 
@@ -37,7 +37,7 @@ const getPath = (key: Leaves<METHODS>): string => {
 export { DDragon, PlatformId, RiotAPITypes, regionToCluster };
 
 export class RiotAPI {
-  readonly cache?: MemoryCache | RedisCache;
+  // readonly cache?: MemoryCache | RedisCache;
 
   readonly riotRateLimiter: RiotRateLimiter;
 
@@ -56,16 +56,16 @@ export class RiotAPI {
     this.config = { ...this.config, ...config };
 
     this.riotRateLimiter = new RiotRateLimiter({
-      concurrency: 10,
-      datastore: this.config.cache?.cacheType || "local",
-      redis: this.config.cache?.client as Bottleneck.RedisConnectionOptions,
+      // concurrency: 10,
+      // datastore: this.config.cache?.cacheType || "local",
+      // redis: this.config.cache?.client as Bottleneck.RedisConnectionOptions,
     });
     this.ddragon = new DDragon();
 
-    if (this.config.cache?.cacheType === "local")
-      this.cache = new MemoryCache();
-    else if (this.config.cache?.cacheType === "ioredis")
-      this.cache = new RedisCache(this.config.cache?.client as RedisOptions);
+    // if (this.config.cache?.cacheType === "local")
+    //   this.cache = new MemoryCache();
+    // else if (this.config.cache?.cacheType === "ioredis")
+    //   this.cache = new RedisCache(this.config.cache?.client as RedisOptions);
   }
 
   private getHeaders(headers?: { [key: string]: string }) {
@@ -103,11 +103,11 @@ export class RiotAPI {
   }
 
   private async checkCache<T>(key: string, url: string): Promise<T | null> {
-    if (this.cache && this.config.cache?.ttls?.byMethod[key]) {
-      const cacheValue = (await this.cache.get(url)) as T | null;
-      if (cacheValue) debugCache("Cache Hit", key, url);
-      return cacheValue;
-    }
+    // if (this.cache && this.config.cache?.ttls?.byMethod[key]) {
+    //   const cacheValue = (await this.cache.get(url)) as T | null;
+    //   if (cacheValue) debugCache("Cache Hit", key, url);
+    //   return cacheValue;
+    // }
     return null;
   }
 
@@ -116,10 +116,10 @@ export class RiotAPI {
     url: string,
     data: object
   ): Promise<void> {
-    if (this.cache && this.config.cache?.ttls?.byMethod[key]) {
-      debugCache("Setting", key, url, this.config.cache.ttls.byMethod[key]);
-      await this.cache.set(url, data, this.config.cache.ttls.byMethod[key]);
-    }
+    // if (this.cache && this.config.cache?.ttls?.byMethod[key]) {
+    //   debugCache("Setting", key, url, this.config.cache.ttls.byMethod[key]);
+    //   await this.cache.set(url, data, this.config.cache.ttls.byMethod[key]);
+    // }
   }
 
   async request<T>(

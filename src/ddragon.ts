@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import { RiotAPITypes } from "./index";
 
 export class DDragon {
@@ -17,7 +16,7 @@ export class DDragon {
       },
     });
 
-    if (resp.ok) return resp.json();
+    if (resp.ok) return resp.json() as T;
     throw resp;
   }
 
